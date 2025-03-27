@@ -24,30 +24,33 @@ import lombok.Builder;
 @NoArgsConstructor
 @Builder
 public class BirthApplicationSearchCriteria   {
-        @JsonProperty("tenantId")
-          @NotNull
 
-                private String tenantId = null;
+        @JsonProperty("tenantId")
+        @NotNull
+        private String tenantId = null;
 
         @JsonProperty("status")
-
-                private String status = null;
+        private String status = null;
 
         @JsonProperty("ids")
-
-        @Size(max=50)         private List<String> ids = null;
+        @Size(max=50)
+        private List<String> ids = null;
 
         @JsonProperty("applicationNumber")
+        @Size(min=2,max=64)
+        private String applicationNumber = null;
 
-        @Size(min=2,max=64)         private String applicationNumber = null;
-
-
+        /**
+         * Adds an item to the list of IDs.
+         *
+         * @param idsItem The ID to be added.
+         * @return The current instance of the BirthApplicationSearchCriteria for method chaining.
+         */
         public BirthApplicationSearchCriteria addIdsItem(String idsItem) {
             if (this.ids == null) {
             this.ids = new ArrayList<>();
             }
-        this.ids.add(idsItem);
-        return this;
+            this.ids.add(idsItem);
+            return this;
         }
-
 }

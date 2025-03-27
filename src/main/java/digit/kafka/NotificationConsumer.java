@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 
+//listens for messages form a kafka topic and process those messages
 @Component
 @Slf4j
 public class NotificationConsumer {
@@ -22,13 +23,20 @@ public class NotificationConsumer {
     @Autowired
     private NotificationService notificationService;
 
+    /**
+     * This method listens for messages from the Kafka topic specified in the application properties.
+     * When a new message is received, the method processes it by converting it into a BirthRegistrationRequest object
+     * and passing it to the NotificationService to handle further actions (e.g., sending notifications).
+     *
+     * @param record
+     * @param topic
+     */
     @KafkaListener(topics = {"${btr.kafka.create.topic}"})
     public void listen(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 
         try {
 
             BirthRegistrationRequest request = mapper.convertValue(record, BirthRegistrationRequest.class);
-            //log.info(request.toString());
             notificationService.prepareEventAndSend(request);
 
         } catch (final Exception e) {

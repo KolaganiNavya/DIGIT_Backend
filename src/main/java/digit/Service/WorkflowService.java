@@ -20,6 +20,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static digit.config.ServiceConstants.*;
+
 @Component
 @Slf4j
 public class WorkflowService {
@@ -33,6 +35,11 @@ public class WorkflowService {
     @Autowired
     private BTRConfiguration config;
 
+    /**
+     * Updates the workflow status for each birth registration application.
+     *
+     * @param birthRegistrationRequest The request to update of workflow
+     */
     public void updateWorkflowStatus(BirthRegistrationRequest birthRegistrationRequest) {
         birthRegistrationRequest.getBirthRegistrationApplications().forEach(application -> {
             ProcessInstance processInstance = getProcessInstanceForBTR(application, birthRegistrationRequest.getRequestInfo());
@@ -41,6 +48,12 @@ public class WorkflowService {
         });
     }
 
+    /**
+     * Makes a call to the workflow service to transition the workflow to the next state.
+     *
+     * @param workflowReq The Workflow Request
+     * @return the State in which the application is present
+     */
     public State callWorkFlow(ProcessInstanceRequest workflowReq) {
 
         ProcessInstanceResponse response = null;
@@ -50,15 +63,22 @@ public class WorkflowService {
         return response.getProcessInstances().get(0).getState();
     }
 
+    /**
+     * Constructs a process instance for the birth registration application.
+     *
+     * @param application Contains the birth registration application
+     * @param requestInfo contians the request Info from the request
+     * @return returns Process Instance
+     */
     private ProcessInstance getProcessInstanceForBTR(BirthRegistrationApplication application, RequestInfo requestInfo) {
         Workflow workflow = application.getWorkflow();
 
         ProcessInstance processInstance = new ProcessInstance();
         processInstance.setBusinessId(application.getApplicationNumber());
         processInstance.setAction(workflow.getAction());
-        processInstance.setModuleName("birth-services");
+        processInstance.setModuleName(MODULE_NAME);
         processInstance.setTenantId(application.getTenantId());
-        processInstance.setBusinessService("BTR");
+        processInstance.setBusinessService(BUSINESS_SERVICE);
         processInstance.setDocuments(workflow.getDocuments());
         processInstance.setComment(workflow.getComments());
 
@@ -78,6 +98,14 @@ public class WorkflowService {
 
     }
 
+    /**
+     * Fetches the current workflow state for a given business ID and tenant.
+     *
+     * @param requestInfo Contains requestInfo from the Request
+     * @param tenantId TenantId of the application
+     * @param businessId Business Id to get the workflow
+     * @return
+     */
     public ProcessInstance getCurrentWorkflow(RequestInfo requestInfo, String tenantId, String businessId) {
 
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
@@ -91,7 +119,7 @@ public class WorkflowService {
             response = mapper.convertValue(res, ProcessInstanceResponse.class);
         }
         catch (Exception e){
-            throw new CustomException("PARSING_ERROR","Failed to parse workflow search response");
+            throw new CustomException(PARSING_ERROR_MESSAGE,PARSING_ERROR_DESCRIPTION);
         }
 
         if(response!=null && !CollectionUtils.isEmpty(response.getProcessInstances()) && response.getProcessInstances().get(0)!=null)
@@ -100,6 +128,13 @@ public class WorkflowService {
         return null;
     }
 
+    /**
+     * Gets the business service associated with a birth registration application.
+     *
+     * @param application The Birth Registration Application
+     * @param requestInfo The RequestInfo
+     * @return
+     */
     private BusinessService getBusinessService(BirthRegistrationApplication application, RequestInfo requestInfo) {
         String tenantId = application.getTenantId();
         StringBuilder url = getSearchURLWithParams(tenantId, "BTR");
@@ -109,37 +144,51 @@ public class WorkflowService {
         try {
             response = mapper.convertValue(result, BusinessServiceResponse.class);
         } catch (IllegalArgumentException e) {
-            throw new CustomException("PARSING ERROR", "Failed to parse response of workflow business service search");
+            throw new CustomException(PARSING_ERROR, FAILED_TO_PARSE_BUSINESS_SERVICE_SEARCH);
         }
 
         if (CollectionUtils.isEmpty(response.getBusinessServices()))
-            throw new CustomException("BUSINESSSERVICE_NOT_FOUND", "The businessService " + "BTR" + " is not found");
+            throw new CustomException(BUSINESS_SERVICE_NOT_FOUND, THE_BUSINESS_SERVICE + BUSINESS_SERVICE + NOT_FOUND);
 
         return response.getBusinessServices().get(0);
     }
 
+    /**
+     * Builds the URL for searching business services with the provided tenant ID and business service name.
+     *
+     * @param tenantId
+     * @param businessService
+     * @return
+     */
     private StringBuilder getSearchURLWithParams(String tenantId, String businessService) {
 
         StringBuilder url = new StringBuilder(config.getWfHost());
         url.append(config.getWfBusinessServiceSearchPath());
-        url.append("?tenantId=");
+        url.append(TENANTID);
         url.append(tenantId);
-        url.append("&businessServices=");
+        url.append(BUSINESS_SERVICES);
         url.append(businessService);
         return url;
     }
 
+    /**
+     * Prepares a process instance request for a birth registration payment.
+     *
+     * @param updateRequest
+     * @return
+     */
     public ProcessInstanceRequest getProcessInstanceForBirthRegistrationPayment(BirthRegistrationRequest updateRequest) {
 
         BirthRegistrationApplication application = updateRequest.getBirthRegistrationApplications().get(0);
 
+        //// Create a new process instance for the payment action
         ProcessInstance process = ProcessInstance.builder()
-                .businessService("BTR")
+                .businessService(BUSINESS_SERVICE)
                 .businessId(application.getApplicationNumber())
-                .comment("Payment for birth registration processed")
-                .moduleName("birth-services")
+                .comment(PAYMENT_COMMENT)
+                .moduleName(MODULE_NAME)
                 .tenantId(application.getTenantId())
-                .action("PAY")
+                .action(PAY_ACTION)
                 .build();
 
         return ProcessInstanceRequest.builder()

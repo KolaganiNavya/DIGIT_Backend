@@ -29,6 +29,12 @@ public class BirthRegistrationResponse {
     @Valid
     private List<@Valid BirthRegistrationApplication> birthRegistrationApplications = new ArrayList<>();
 
+    /**
+     * Adds a single BirthRegistrationApplication to the list of applications in the response.
+     *
+     * @param item The birth registration application to be added to the list.
+     * @return The current BirthRegistrationResponse instance with the added application.
+     */
     public BirthRegistrationResponse addBirthRegistrationApplicationsItem(BirthRegistrationApplication item) {
         birthRegistrationApplications.add(item);
         return this;

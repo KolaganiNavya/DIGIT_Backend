@@ -47,4 +47,22 @@ public class ServiceConstants {
     public static final String BUSINESS_SERVICES = "&businessServices=";
 
 
+    public static final String PARSING_ERROR_MESSAGE = "PARSING_ERROR";
+    public static final String PARSING_ERROR_DESCRIPTION = "Failed to parse workflow search response";
+    public static final String MODULE_NAME = "birth-services";
+    public static final String BUSINESS_SERVICE = "BTR";
+    public static final String PAY_ACTION = "PAY";
+    public static final String PAYMENT_COMMENT = "Payment for birth registration processed";
+    public static final String USER_NOT_FOUND_MSG="No user found for the uuids";
+    public static final String USER_NOT_FOUND="USER_NOT_FOUND";
+    public static final String INVALIC_ACCOUNT_ID_MSG="No user exist for the given accountId";
+    public static final String INVALID_ACCOUNT_ID="INVALID_ACCOUNTID";
+    public static final String KAFKA_SAVE_BIRTH_APPLICATION = "save-birth-application";
+    public static final String KAFKA_UPDATE_BIRTH_APPLICATION = "update-birth-application";
+    public static final String BIRTH_APP_ERROR_CODE = "EG_BT_APP_ERR";
+    public static final String TENANT_ID_MANDATORY = "tenantId is mandatory for creating birth registration applications";
+    public static final String REGISTRATION_CREATE = "/registration/v1/_create";
+    public static final String REGISTRATION_SEARCH = "/v1/registration/_search";
+    public static final String REGISTRATION_UPDATE = "/registration/v1/_update";
+
 }

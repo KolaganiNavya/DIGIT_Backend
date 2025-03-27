@@ -1,6 +1,5 @@
 package digit.repository;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.extern.slf4j.Slf4j;
@@ -22,14 +21,25 @@ public class ServiceRequestRepository {
 
     private RestTemplate restTemplate;
 
-
+    /**
+     * Constructor to initialize the ServiceRequestRepository with dependencies.
+     *
+     * @param mapper The ObjectMapper used to configure JSON serialization and deserialization.
+     * @param restTemplate The RestTemplate used to make HTTP requests.
+     */
     @Autowired
     public ServiceRequestRepository(ObjectMapper mapper, RestTemplate restTemplate) {
         this.mapper = mapper;
         this.restTemplate = restTemplate;
     }
 
-
+    /**
+     * Makes an HTTP POST request to an external service and returns the response.
+     *
+     * @param uri The URI of the external service to which the POST request is made.
+     * @param request The object to be sent in the body of the POST request.
+     * @return The response from the external service as an Object.
+     */
     public Object fetchResult(StringBuilder uri, Object request) {
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         Object response = null;

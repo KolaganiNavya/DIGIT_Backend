@@ -19,7 +19,11 @@ public class UrlShortenerUtil {
     @Autowired
     private Configuration configs;
 
-
+    /**
+     * This method takes a URL and shortens it using a third-party URL shortening service.
+     * @param url The original URL that needs to be shortened.
+     * @return The shortened URL if the shortening was successful, or the original URL if an error occurred.
+     */
     public String getShortenedUrl(String url){
 
         HashMap<String,String> body = new HashMap<>();
@@ -34,6 +38,4 @@ public class UrlShortenerUtil {
         }
         else return res;
     }
-
-
 }

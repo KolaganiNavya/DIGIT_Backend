@@ -31,9 +31,14 @@ public class MdmsUtil {
     @Autowired
     private Configuration configs;
 
-
-
-
+    /**
+     * This method fetches MDMS (Master Data Management Service) data from the MDMS service.
+     * @param requestInfo  The RequestInfo object that holds metadata about the request (e.g., user info, timestamp).
+     * @param tenantId    The tenant ID for which the data is to be fetched.
+     * @param moduleName  The name of the module from which the data needs to be fetched.
+     * @param masterNameList A list of master names to fetch data for (e.g., "Citizen", "Property").
+     * @return A Map containing the master data fetched from MDMS.
+     */
     public Map<String, Map<String, JSONArray>> fetchMdmsData(RequestInfo requestInfo, String tenantId, String moduleName,
                                                                                 List<String> masterNameList) {
         StringBuilder uri = new StringBuilder();
@@ -50,11 +55,19 @@ public class MdmsUtil {
         }
 
         return mdmsResponse.getMdmsRes();
-        //log.info(ulbToCategoryListMap.toString());
     }
 
+    /**
+     * This method constructs the request object that will be sent to the MDMS service.
+     * @param requestInfo The RequestInfo object containing metadata for the request.
+     * @param tenantId The tenant ID for which data needs to be fetched.
+     * @param moduleName The name of the module for which the data is to be fetched.
+     * @param masterNameList The list of master names (e.g., "Citizen", "Property").
+     * @return A MdmsCriteriaReq object that can be sent to the MDMS service.
+     */
     private MdmsCriteriaReq getMdmsRequest(RequestInfo requestInfo, String tenantId,
                                            String moduleName, List<String> masterNameList) {
+
         List<MasterDetail> masterDetailList = new ArrayList<>();
         for(String masterName: masterNameList) {
             MasterDetail masterDetail = new MasterDetail();

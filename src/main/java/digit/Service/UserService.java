@@ -14,7 +14,6 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,12 +21,14 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static digit.config.ServiceConstants.*;
+
 
 @Service
 @Slf4j
 public class UserService {
-    private UserUtil userUtils;
 
+    private UserUtil userUtils;
     private BTRConfiguration config;
 
     @Autowired
@@ -38,7 +39,8 @@ public class UserService {
 
     /**
      * Calls user service to enrich user from search or upsert user
-     * @param request
+     *
+     * @param request the birth registration request containing birth registration applications
      */
     public void callUserService(BirthRegistrationRequest request){
         request.getBirthRegistrationApplications().forEach(application -> {
@@ -60,6 +62,12 @@ public class UserService {
         });
     }
 
+    /**
+     * Creates a User object for the father from the application data.
+     *
+     * @param application The application data
+     * @return The user object containing details of the father
+     */
     private User createFatherUser(BirthRegistrationApplication application){
         User father = application.getFather();
         User user = User.builder().userName(father.getUserName())
@@ -74,6 +82,12 @@ public class UserService {
         return user;
     }
 
+    /**
+     * Creates a User object for the mother from the application data.
+     *
+     * @param application The application data
+     * @return The user object containing details of the mother
+     */
     private User createMotherUser(BirthRegistrationApplication application){
         User mother = application.getMother();
         User user = User.builder().userName(mother.getUserName())
@@ -87,6 +101,14 @@ public class UserService {
                 .build();
         return user;
     }
+
+    /**
+     * Upserts (creates or updates) a user by checking if the user exists in the system.
+     *
+     * @param user contains the user that needs to be upserted
+     * @param requestInfo contains user info from the request
+     * @return return upserted user
+     */
     private User upsertUser(User user, RequestInfo requestInfo){
 
         String tenantId = user.getTenantId();
@@ -107,35 +129,44 @@ public class UserService {
         }
 
         // Enrich the accountId
-        // user.setId(userServiceResponse.getUuid());
         return userServiceResponse;
     }
 
-
+    /**
+     * Enriches the father and mother's details by calling the user service to fetch user details using UUID.
+     *
+     * @param application The Birth registration application from the request
+     * @param requestInfo contains Request Info from the request provided
+     */
     private void enrichUser(BirthRegistrationApplication application, RequestInfo requestInfo){
         String accountIdFather = application.getFather().getUuid();
         String  accountIdMother = application.getMother().getUuid();
         String tenantId = application.getTenantId();
 
+        // Search for the father and mother users using their UUID
         UserDetailResponse userDetailResponseFather = searchUser(userUtils.getStateLevelTenant(tenantId),accountIdFather,null);
         UserDetailResponse userDetailResponseMother = searchUser(userUtils.getStateLevelTenant(tenantId),accountIdMother,null);
-        if(userDetailResponseFather.getUser().isEmpty())
-            throw new CustomException("INVALID_ACCOUNTID","No user exist for the given accountId");
 
-        else application.getFather().setUuid(userDetailResponseFather.getUser().get(0).getUuid());
+        // If no user found for father or mother, throw exception
+        if(userDetailResponseFather.getUser().isEmpty())
+            throw new CustomException(INVALID_ACCOUNT_ID,INVALIC_ACCOUNT_ID_MSG);
+
+        else
+            application.getFather().setUuid(userDetailResponseFather.getUser().get(0).getUuid());
 
         if(userDetailResponseMother.getUser().isEmpty())
-            throw new CustomException("INVALID_ACCOUNTID","No user exist for the given accountId");
+            throw new CustomException(INVALID_ACCOUNT_ID,INVALIC_ACCOUNT_ID_MSG);
 
-        else application.getMother().setUuid(userDetailResponseMother.getUser().get(0).getUuid());
+        else
+            application.getMother().setUuid(userDetailResponseMother.getUser().get(0).getUuid());
 
     }
 
     /**
      * Creates the user from the given userInfo by calling user service
-     * @param requestInfo
-     * @param tenantId
-     * @param userInfo
+     * @param requestInfo contains requestInfo from the request
+     * @param tenantId contains tenantId
+     * @param userInfo contains userinfo
      * @return
      */
     private User createUser(RequestInfo requestInfo,String tenantId, User userInfo) {
@@ -155,9 +186,9 @@ public class UserService {
 
     /**
      * Updates the given user by calling user service
-     * @param requestInfo
-     * @param user
-     * @param userFromSearch
+     * @param requestInfo contains request info
+     * @param user contains the user from the application
+     * @param userFromSearch contains the user obtained from search
      * @return
      */
     private User updateUser(RequestInfo requestInfo,User user,User userFromSearch) {
@@ -205,7 +236,7 @@ public class UserService {
 
     /**
      * calls the user search API based on the given list of user uuids
-     * @param uuids
+     * @param uuids contains list of uuid's
      * @return
      */
     private Map<String,User> searchBulkUser(List<String> uuids){
@@ -224,7 +255,7 @@ public class UserService {
         List<User> users = userDetailResponse.getUser();
 
         if(CollectionUtils.isEmpty(users))
-            throw new CustomException("USER_NOT_FOUND","No user found for the uuids");
+            throw new CustomException(USER_NOT_FOUND,USER_NOT_FOUND_MSG);
 
         Map<String,User> idToUserMap = users.stream().collect(Collectors.toMap(User::getUuid, Function.identity()));
 

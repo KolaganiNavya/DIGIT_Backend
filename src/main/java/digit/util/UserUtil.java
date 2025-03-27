@@ -6,7 +6,6 @@ import static digit.config.ServiceConstants.*;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
 import org.egov.common.contract.user.UserDetailResponse;
-import org.egov.common.contract.user.enums.UserType;
 import digit.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +40,6 @@ public class UserUtil {
      * @param uri The address of the endpoint
      * @return Response from user service as parsed as userDetailResponse
      */
-
     public UserDetailResponse userCall(Object userRequest, StringBuilder uri) {
         String dobFormat = null;
         if(uri.toString().contains(configs.getUserSearchEndpoint())  || uri.toString().contains(configs.getUserUpdateEndpoint()))
@@ -65,7 +63,6 @@ public class UserUtil {
      * Parses date formats to long for all users in responseMap
      * @param responseMap LinkedHashMap got from user api response
      */
-
     public void parseResponse(LinkedHashMap responseMap, String dobFormat){
         List<LinkedHashMap> users = (List<LinkedHashMap>)responseMap.get(USER);
         String format1 = DOB_FORMAT_D_M_Y_H_M_S;

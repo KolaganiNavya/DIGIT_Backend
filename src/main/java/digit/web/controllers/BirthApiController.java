@@ -16,9 +16,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.egov.common.contract.request.RequestInfo;
 import java.util.Collections;
 import java.util.List;
-
 import jakarta.validation.Valid;
 import jakarta.servlet.http.HttpServletRequest;
+
+import static digit.config.ServiceConstants.*;
 
 @Controller
 @RequestMapping("")
@@ -31,6 +32,7 @@ public class BirthApiController {
     @Autowired
     private ResponseInfoFactory responseInfoFactory;
 
+    // Constructor for injecting dependencies into the controller
     @Autowired
     public BirthApiController(ObjectMapper objectMapper, HttpServletRequest request, BirthRegistrationService birthRegistrationService) {
         this.objectMapper = objectMapper;
@@ -38,7 +40,13 @@ public class BirthApiController {
         this.birthRegistrationService = birthRegistrationService;
     }
 
-    @RequestMapping(value = "/registration/v1/_create", method = RequestMethod.POST)
+    /**
+     * Handles the creation of new birth registration applications.
+     *
+     * @param birthRegistrationRequest The request containing the details of the new birth registration application(s).
+     * @return A ResponseEntity containing the response with the created birth registration applications.
+     */
+    @RequestMapping(value = REGISTRATION_CREATE, method = RequestMethod.POST)
     public ResponseEntity<BirthRegistrationResponse> v1RegistrationCreatePost(
             @ApiParam(value = "Details for the new Birth Registration Application(s) + RequestInfo meta data.", required = true)
             @Valid @RequestBody BirthRegistrationRequest birthRegistrationRequest) {
@@ -56,7 +64,13 @@ public class BirthApiController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/v1/registration/_search", method = RequestMethod.POST)
+    /**
+     * Handles the search for existing birth registration applications.
+     *
+     * @param birthApplicationSearchRequest The search request containing criteria and meta data.
+     * @return A ResponseEntity containing the response with the list of birth registration applications that match the search criteria.
+     */
+    @RequestMapping(value = REGISTRATION_SEARCH, method = RequestMethod.POST)
     public ResponseEntity<BirthRegistrationResponse> v1RegistrationSearchPost(
             @ApiParam(value = "Details for the new Birth Registration Application(s) + RequestInfo meta data.", required = true)
             @Valid @RequestBody BirthApplicationSearchRequest birthApplicationSearchRequest) {
@@ -66,7 +80,8 @@ public class BirthApiController {
                 birthApplicationSearchRequest.getBirthApplicationSearchCriteria()
         );
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(birthApplicationSearchRequest.getRequestInfo(), true); // ✅ Fix
-
+        System.out.println(applications);
+        System.out.println(responseInfo);
         BirthRegistrationResponse response = BirthRegistrationResponse.builder()
                 .birthRegistrationApplications(applications)
                 .responseInfo(responseInfo) // ✅ Fix: Use ResponseInfo
@@ -75,7 +90,13 @@ public class BirthApiController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/registration/v1/_update", method = RequestMethod.POST)
+    /**
+     * Handles the update of existing birth registration applications.
+     *
+     * @param birthRegistrationRequest The request containing the updated details of the birth registration application.
+     * @return A ResponseEntity containing the response with the updated birth registration application.
+     */
+    @RequestMapping(value = REGISTRATION_UPDATE, method = RequestMethod.POST)
     public ResponseEntity<BirthRegistrationResponse> v1RegistrationUpdatePost(
             @ApiParam(value = "Details for the new Birth Registration Application(s) + RequestInfo meta data.", required = true)
             @Valid @RequestBody BirthRegistrationRequest birthRegistrationRequest) {

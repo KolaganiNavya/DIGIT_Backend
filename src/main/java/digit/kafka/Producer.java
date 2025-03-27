@@ -14,7 +14,15 @@ public class Producer {
     @Autowired
     private CustomKafkaTemplate<String, Object> kafkaTemplate;
 
+    /**
+     * pushes message into mentioned topic
+     *
+     * @param topic Contains the topic the data needs to be pushed to
+     * @param value Contains the value that should be pushed to topic
+     */
     public void push(String topic, Object value) {
+
+        // Use the kafkaTemplate to send the provided value to the specified topic.
         kafkaTemplate.send(topic, value);
     }
 }

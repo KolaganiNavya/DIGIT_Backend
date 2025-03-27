@@ -22,8 +22,7 @@ import java.util.TimeZone;
 @Getter
 public class Configuration {
 
-
-    // User Config
+    // User Configuratioins
     @Value("${egov.user.host}")
     private String userHost;
 
@@ -40,7 +39,7 @@ public class Configuration {
     private String userUpdateEndpoint;
 
 
-    //Idgen Config
+    //Idgen Configurations
     @Value("${egov.idgen.host}")
     private String idGenHost;
 
@@ -48,7 +47,7 @@ public class Configuration {
     private String idGenPath;
 
 
-    //Workflow Config
+    //Workflow Configurations
     @Value("${egov.workflow.host}")
     private String wfHost;
 
@@ -62,7 +61,7 @@ public class Configuration {
     private String wfProcessInstanceSearchPath;
 
 
-    //MDMS
+    //MDMS configurations
     @Value("${egov.mdms.host}")
     private String mdmsHost;
 
@@ -70,7 +69,7 @@ public class Configuration {
     private String mdmsEndPoint;
 
 
-    //HRMS
+    //HRMS configurations
     @Value("${egov.hrms.host}")
     private String hrmsHost;
 
@@ -78,7 +77,7 @@ public class Configuration {
     private String hrmsEndPoint;
 
 
-    //URLShortening
+    //URLShortening configurations
     @Value("${egov.url.shortner.host}")
     private String urlShortnerHost;
 
@@ -86,7 +85,7 @@ public class Configuration {
     private String urlShortnerEndpoint;
 
 
-    //SMSNotification
+    //SMSNotification configurations
     @Value("${egov.sms.notification.topic}")
     private String smsNotificationTopic;
 }

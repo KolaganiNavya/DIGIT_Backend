@@ -9,6 +9,12 @@ import static digit.config.ServiceConstants.*;
 @Component
 public class ResponseInfoFactory {
 
+    /**
+     * This method creates a ResponseInfo object from the provided RequestInfo and success flag.
+     * @param requestInfo The RequestInfo object containing metadata about the request (e.g., API ID, version, timestamp, etc.).
+     * @param success A Boolean flag indicating whether the operation was successful or not.
+     * @return A ResponseInfo object that contains the response details corresponding to the request.
+     */
     public ResponseInfo createResponseInfoFromRequestInfo(final RequestInfo requestInfo, final Boolean success) {
 
         final String apiId = requestInfo != null ? requestInfo.getApiId() : "";

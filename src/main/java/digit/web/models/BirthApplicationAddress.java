@@ -25,24 +25,21 @@ import lombok.Builder;
 @NoArgsConstructor
 @Builder
 public class BirthApplicationAddress   {
-    @JsonProperty("id")
 
+    @JsonProperty("id")
     @Valid
     private String id = null;
 
     @JsonProperty("tenantId")
     @NotNull
-
-    @Size(min=2,max=64)         private String tenantId = null;
+    @Size(min=2,max=64)
+    private String tenantId = null;
 
     @JsonProperty("applicationNumber")
-
     private String applicationNumber = null;
 
     @JsonProperty("applicantAddress")
-
     @Valid
     private Address applicantAddress = null;
-
 
 }

@@ -20,10 +20,12 @@ import lombok.Builder;
 @Builder
 public class BirthApplicationSearchRequest {
 
+    /// RequestInfo is a metadata object containing request-related details
     @JsonProperty("RequestInfo")
     @Valid
     private RequestInfo requestInfo = null;
 
+    // BirthApplicationSearchCriteria holds the actual search filters
     @JsonProperty("BirthApplicationSearchCriteria")
     @Valid
     private BirthApplicationSearchCriteria birthApplicationSearchCriteria = null;

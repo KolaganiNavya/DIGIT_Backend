@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+
 @Slf4j
 @Service
 public class NotificationService {
@@ -25,8 +26,15 @@ public class NotificationService {
     @Autowired
     private RestTemplate restTemplate;
 
+    // Predefined SMS template to notify parents of the registration
     private static final String smsTemplate = "Dear {FATHER_NAME} and {MOTHER_NAME} your birth registration application has been successfully created on the system with application number - {APPNUMBER}.";
 
+    /**
+     * Prepares SMS notifications for both the father and mother of a birth registration application.
+     * Sends notifications by pushing the SMSRequest objects to Kafka for processing.
+     *
+     * @param request The birth registration request containing the applications for which notifications will be sent.
+     */
     public void prepareEventAndSend(BirthRegistrationRequest request){
         List<SMSRequest> smsRequestList = new ArrayList<>();
         request.getBirthRegistrationApplications().forEach(application -> {
@@ -41,6 +49,13 @@ public class NotificationService {
         }
     }
 
+    /**
+     * Generates a custom SMS message by replacing placeholders in the predefined template.
+     *
+     * @param template The predefined SMS template with placeholders.
+     * @param application The birth registration application with father and mother details.
+     * @return The custom message with placeholders replaced by actual values.
+     */
     private String getCustomMessage(String template, BirthRegistrationApplication application) {
         template = template.replace("{APPNUMBER}", application.getApplicationNumber());
         template = template.replace("{FATHER_NAME}", application.getFather().getName());

@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Data;
 import lombok.Builder;
 import org.egov.common.contract.request.RequestInfo;
+
 /**
  * Contract class to receive request. Array of  items are used in case of create, whereas single  item is used for update
  */
@@ -23,8 +24,8 @@ import org.egov.common.contract.request.RequestInfo;
 @NoArgsConstructor
 @Builder
 public class BirthRegistrationRequest   {
-    @JsonProperty("RequestInfo")
 
+    @JsonProperty("RequestInfo")
     @Valid
     private RequestInfo requestInfo = null;
 
@@ -32,7 +33,12 @@ public class BirthRegistrationRequest   {
     @Valid
     private List<BirthRegistrationApplication> birthRegistrationApplications = null;
 
-
+    /**
+     * Adds a single BirthRegistrationApplication to the list.
+     *
+     * @param birthRegistrationApplicationsItem The birth registration application to add to the list.
+     * @return The current BirthRegistrationRequest instance with the added application.
+     */
     public BirthRegistrationRequest addBirthRegistrationApplicationsItem(BirthRegistrationApplication birthRegistrationApplicationsItem) {
         if (this.birthRegistrationApplications == null) {
             this.birthRegistrationApplications = new ArrayList<>();
@@ -40,5 +46,4 @@ public class BirthRegistrationRequest   {
         this.birthRegistrationApplications.add(birthRegistrationApplicationsItem);
         return this;
     }
-
 }
